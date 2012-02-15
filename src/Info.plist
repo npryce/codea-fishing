@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>Unknown</string>
+	<key>Buffer Order</key>
+	<array>
+		<string>Main</string>
+		<string>AttractMode</string>
+		<string>PlayMode</string>
+		<string>World</string>
+		<string>Angler</string>
+		<string>Fish</string>
+		<string>Flotsam</string>
+		<string>Group</string>
+		<string>Repeater</string>
+		<string>FontToImage</string>
+		<string>Controller</string>
+		<string>ControllerSplitScreen</string>
+		<string>ControllerAll</string>
+		<string>ControllerVirtualSlider</string>
+		<string>Functions</string>
+	</array>
+	<key>Created</key>
+	<string>2012-01-27 22:24:15 +0000</string>
+	<key>Description</key>
+	<string>No description available</string>
+</dict>
+</plist>
