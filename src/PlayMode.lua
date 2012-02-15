@@ -2,6 +2,7 @@ PlayMode = class()
 
 function PlayMode:start()
     self.score = 0
+    self.fishCount = 3
     
     self.edge = physics.body(EDGE, 
             vec2(0,WATER_HEIGHT), vec2(WIDTH, WATER_HEIGHT))
@@ -10,9 +11,10 @@ function PlayMode:start()
     
     self.player = Angler(vec2(WIDTH/2, HEIGHT-80))
     self.stuff = Group()
+    self.bodyOwners = {}
     
-    for i = 1, 3 do
-        self.stuff:add(Fish())
+    for i = 1, self.fishCount do
+        self.stuff:add(Fish(self))
     end
     
     for i = 1, 10 do
@@ -52,8 +54,8 @@ function PlayMode:collide(c)
 end
 
 function PlayMode:animate(dt)
-    self.player:animate(DeltaTime)
-    self.stuff:animate(DeltaTime)
+    self.player:animate(dt)
+    self.stuff:animate(dt)
 end
 
 function PlayMode:draw()
@@ -92,7 +94,23 @@ function PlayMode:drawEdge(body)
     end
 end
 
-function PlayMode:flotsamCaptured()
+function PlayMode:flotsamCaptured(flotsam)
     self.score = self.score + 1
+    self.player:maybeRelease(flotsam)
 end
 
+function PlayMode:fishEscaped(fish)
+    self.fishCount = self.fishCount - 1
+    
+    if self.fishCount == 0 then
+        switchMode(GameOverMode(self))
+    end
+end
+
+function PlayMode:stop()
+    -- not required
+end
+
+function PlayMode:destroy()
+    -- TODO
+end

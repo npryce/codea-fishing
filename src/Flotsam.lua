@@ -16,7 +16,7 @@ function Flotsam:init(game)
     self.body = physics.body(CIRCLE, 20)
     self.body.info = self
     self.body.gravityScale = 0
-    self.body.restitution = 1
+    self.body.restitution = 0.5
     self.body.categories = {CATEGORY_FLOATING}
     self.body.mask = self.floatingMask
     
@@ -58,8 +58,7 @@ function Flotsam:animate(dt)
     
     if self.hooker then
         if p.y > (WATER_HEIGHT+32) then
-            self.game:flotsamCaptured()
-            self.hooker:release(self)
+            self.game:flotsamCaptured(self)
             self:relaunch()
         end
     else

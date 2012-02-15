@@ -4,9 +4,12 @@ do
     Group = class()
     Group.mortal = false
     
-    function Group:init()
+    function Group:init(...)
         self.things = {}
         self.count = 0
+        for k, v in pairs({...}) do
+            self:add(v)
+        end
     end
     
     function Group:add(thing)

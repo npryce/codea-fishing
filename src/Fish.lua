@@ -6,7 +6,7 @@ Fish.minSpeed = 25
 Fish.maxSpeed = 100
 Fish.spriteYOffset = -8 -- to compensate for emoji font
 Fish.swimmingMask = {CATEGORY_LINE, CATEGORY_FLOATING}
-Fish.escapingMask = {CATEGORY_LINE}
+Fish.escapingMask = {CATEGORY_FLOATING}
 
 Fish.swimmingState = 1
 Fish.hookedState = 2
@@ -16,7 +16,8 @@ function Fish.setup()
     Fish.images = map(emojiToImage, {"🐟","🐠"})
 end
 
-function Fish:init()
+function Fish:init(game)
+    self.game = game
     self.body = physics.body(CIRCLE, self.radius)
     self.body.position = self:randomOffscreenPosition()
     self.body.fixedRotation = true
@@ -34,7 +35,7 @@ function Fish:isAlive()
     return self.body ~= nil
 end
 
-function Fish:die()
+function Fish:destroy()
     self.body:destroy()
     self.body = nil
 end
@@ -52,6 +53,7 @@ function Fish:draw()
     pushMatrix()
     translate(self.body.position.x, self.body.position.y)
     if self.state == self.hookedState then
+        translate(0, -16)
         rotate(-90)
     else
         scale(scalex(self.body.linearVelocity), 1)
@@ -82,9 +84,9 @@ end
 
 function Fish:startSwimmingTo(pos)
     self.target = pos
+    
     local direction = (pos - self.body.position):normalize()
     local speed
-    
     if self.state == self.escapedState then
         speed = self.maxSpeed * 5
     else
@@ -119,7 +121,8 @@ end
 
 function Fish:animate(dt)
     if self.state == self.escapedState and self:isOffscreen() then
-        self:die()
+        self.game:fishEscaped(self)
+        self:destroy()
     elseif self.state ~= self.hookedState and self:needsNewTarget() then
         local pos
         if self.state == self.swimmingState then
@@ -147,7 +150,7 @@ function Fish:hooked(hooker, hookPosition)
     self.state = self.hookedState
     self.body.linearVelocity = 0
     self.body.position = hookPosition
-    self.body.gravityScale = 0.1
+    self.body.gravityScale = 0.5
 end
 
 function Fish:unhooked()

@@ -1,9 +1,12 @@
 AttractMode = class()
 
+AttractMode.titleColor = color(255, 0, 92, 255)
+
+
 function AttractMode:start()
     self.fish = Group()
     for i = 1, 12 do
-        self.fish:add(Fish())
+        self.fish:add(Fish(self))
     end
 end
 
@@ -29,7 +32,7 @@ function AttractMode:draw()
     font("PartyLetPlain")
     textMode(CENTER)
     textWrapWidth(WIDTH)
-    fill(255, 0, 92, 255)
+    fill(self.titleColor)
     fontSize(132)
     sillyText("Help the Fish", WIDTH/2, 2*HEIGHT/3)
     
@@ -47,6 +50,10 @@ function sillyText(str, x, y)
 end
 
 function AttractMode:collide(c)
+    -- don't care
+end
+
+function AttractMode:fishEscaped(fish)
     -- don't care
 end
 

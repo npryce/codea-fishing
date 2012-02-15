@@ -1,7 +1,8 @@
 -- Main
 
 -- TODO
--- game over when no more fish
+-- 
+-- implement PlayMode:destroy
 -- hook points at center of hooked thing
 -- when flotsam landed, get score multiplier, which is lost when some flotsam floats offscreen
 -- bonus flotsam creates a new fish (or other effects)
@@ -20,7 +21,7 @@ hiscore = 10
 
 function setup()
     iparameter("DEBUG", 0, 1)
-    --displayMode(FULLSCREEN_NO_BUTTONS)
+    displayMode(FULLSCREEN)
     
     Fish.setup()
     Flotsam.setup()
