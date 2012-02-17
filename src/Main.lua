@@ -2,14 +2,14 @@
 
 -- TODO
 -- 
--- implement PlayMode:destroy
 -- hook points at center of hooked thing
--- when flotsam landed, get score multiplier, which is lost when some flotsam floats offscreen
--- bonus flotsam creates a new fish (or other effects)
+-- hiscore, show hiscore on attract screen, save hiscore
+-- angler wears crown when have hiscore
+-- flotsam moves faster as score gets higher
+-- more flotsam created as score increases
+-- bonus flotsam creates a new fish (or other effects) when landed
 -- water ripple effect
 -- sfx
--- save highscore
--- wear crown if have hiscore
 -- custom spritepack
 
 
@@ -51,7 +51,11 @@ function collide(c)
     end
 end
 
+function readHighscore()
+    return readLocalData("highscore", 10)
+end
 
-
-
+function saveHighscore(newHighscore)
+    saveLocalData("highscore", newHighscore)
+end
 

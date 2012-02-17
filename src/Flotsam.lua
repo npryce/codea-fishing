@@ -57,13 +57,15 @@ function Flotsam:animate(dt)
     local p = self.body.position
     
     if self.hooker then
-        if p.y > (WATER_HEIGHT+32) then
-            self.game:flotsamCaptured(self)
+        if p.y > (self.game.waterHeight+32) then
+            self.hooker:maybeRelease(self)
+            self.game:flotsamLanded(self)
             self:relaunch()
         end
     else
         if self.hasBeenOnscreen or self.body.linearVelocity.x >= 0 then
             if not isOnscreen(p, -32) then
+                self.game:flotsamEscaped(self)
                 self:relaunch()
             end
         else
@@ -77,7 +79,7 @@ function isOnscreen(p, r)
        and p.y >= r and p.y < HEIGHT-r
 end
 
-function Flotsam:hooked(hooker, hookPosition)
+function Flotsam:hooked(hooker)
     self.hooker = hooker
     self.body.mask = self.hookedMask
     self.body.linearVelocity = 0
@@ -86,6 +88,10 @@ end
 function Flotsam:unhooked()
     self.hooker = nil
     self.body.mask = self.floatingMask
+end
+
+function Flotsam:destroy()
+    self.body:destroy()
 end
 
 

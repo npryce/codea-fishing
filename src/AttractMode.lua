@@ -1,13 +1,15 @@
 AttractMode = class()
 
 AttractMode.titleColor = color(255, 0, 92, 255)
-
+AttractMode.waterHeight = HEIGHT
 
 function AttractMode:start()
     self.fish = Group()
     for i = 1, 12 do
         self.fish:add(Fish(self))
     end
+    
+    self.highscore = readHighscore()
 end
 
 function AttractMode:animate(dt)
@@ -36,6 +38,9 @@ function AttractMode:draw()
     fontSize(132)
     sillyText("Help the Fish", WIDTH/2, 2*HEIGHT/3)
     
+    fontSize(40)
+    sillyText("Highscore - " .. self.highscore, WIDTH/2, 7*HEIGHT/16)
+        
     fontSize(80)
     sillyText("Tap to Start", WIDTH/2, HEIGHT/4)
 end

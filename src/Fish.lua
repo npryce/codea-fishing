@@ -98,12 +98,12 @@ end
 
 function Fish:randomWaterPosition()
     return vec2(math.random(self.spacing, WIDTH-self.spacing),
-                math.random(self.spacing, WATER_HEIGHT-self.spacing))
+                math.random(self.spacing, self.game.waterHeight-self.spacing))
 end
 
 function Fish:randomOffscreenPosition()
     return vec2(self.startX[math.random(1,2)],
-                math.random(0, WATER_HEIGHT-self.spacing))
+                math.random(0, self.game.waterHeight-self.spacing))
 end
 
 function Fish:randomOffscreenPositionAwayFrom(fromPoint)
@@ -116,7 +116,7 @@ function Fish:randomOffscreenPositionAwayFrom(fromPoint)
         xIndex = 2
     end
     return vec2(self.startX[xIndex],
-                math.random(0, WATER_HEIGHT-self.spacing))
+                math.random(0, self.game.waterHeight-self.spacing))
 end
 
 function Fish:animate(dt)
@@ -146,7 +146,7 @@ function Fish:needsNewTarget()
     return delta.x*v.x <= 0 or delta.y*v.y <= 0
 end
 
-function Fish:hooked(hooker, hookPosition)
+function Fish:hooked(hooker)
     self.state = self.hookedState
     self.body.linearVelocity = 0
     self.body.position = hookPosition
@@ -154,7 +154,7 @@ function Fish:hooked(hooker, hookPosition)
 end
 
 function Fish:unhooked()
-    self:swimAway(vec2(WIDTH/2, WATER_HEIGHT/2))
+    self:swimAway(vec2(WIDTH/2, self.game.waterHeight/2))
     self.body.gravityScale = 0
 end
 

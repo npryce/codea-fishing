@@ -1,7 +1,13 @@
 PlayMode = class()
 
+PlayMode.waterHeight = WATER_HEIGHT
+
 function PlayMode:start()
+    self.caughtCount = 0
     self.score = 0
+    self.scoreMultiplier = 1
+    
+    self.hiscore = readHighscore()
     self.fishCount = 3
     
     self.edge = physics.body(EDGE, 
@@ -77,11 +83,16 @@ end
 function PlayMode:drawScore()
     textMode(CORNER)
     font("DB LCD Temp")
-    fontSize(64)
     fill(255, 255, 255, 202)
     
-    w, h = textSize(self.score)
-    text(self.score, WIDTH-(w+16), HEIGHT-(h+16))
+    fontSize(64)
+    sw, sh = textSize(self.score)
+    text(self.score, WIDTH-(sw+16), HEIGHT-(sh+16))
+    
+    fontSize(24)
+    local multiplierText = "x"..self.scoreMultiplier
+    mw, mh = textSize(multiplierText)
+    text(multiplierText, WIDTH-(mw+16), HEIGHT-(sh+16+mh))
 end
 
 function PlayMode:drawEdge(body)
@@ -94,13 +105,19 @@ function PlayMode:drawEdge(body)
     end
 end
 
-function PlayMode:flotsamCaptured(flotsam)
-    self.score = self.score + 1
-    self.player:maybeRelease(flotsam)
+function PlayMode:flotsamLanded(flotsam)
+    self.caughtCount = self.caughtCount + 1
+    self.score = self.score + self.scoreMultiplier
+    self.scoreMultiplier = self.scoreMultiplier + 1
+end
+
+function PlayMode:flotsamEscaped(flotsam)
+    self.scoreMultiplier = 1
 end
 
 function PlayMode:fishEscaped(fish)
     self.fishCount = self.fishCount - 1
+    self.scoreMultiplier = 1
     
     if self.fishCount == 0 then
         switchMode(GameOverMode(self))
@@ -112,5 +129,6 @@ function PlayMode:stop()
 end
 
 function PlayMode:destroy()
-    -- TODO
+    self.player:destroy()
+    self.stuff:each(function (x) x:destroy() end)
 end

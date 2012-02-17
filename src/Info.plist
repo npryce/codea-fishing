@@ -7,10 +7,10 @@
 	<key>Buffer Order</key>
 	<array>
 		<string>Main</string>
+		<string>World</string>
 		<string>AttractMode</string>
 		<string>PlayMode</string>
 		<string>GameOverMode</string>
-		<string>World</string>
 		<string>Angler</string>
 		<string>Fish</string>
 		<string>Flotsam</string>

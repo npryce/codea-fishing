@@ -47,6 +47,18 @@ function Angler:init(pos)
     end
 end
 
+function Angler:destroy()
+    if self.hookJoint then
+        self.hookJoint:destroy()
+    end
+    for _, joint in pairs(self.joints) do
+        joint:destroy()
+    end
+    for _, body in pairs(self.bodies) do
+        body:destroy()
+    end
+end
+
 function Angler:steer(steerX)
     self.bodies[1].linearVelocity = steerX * self.maxVelocity
 end
@@ -80,7 +92,7 @@ function Angler:catch(thing)
         self:releaseCaught()
     end
     
-    thing:hooked(self, self.hook.position)
+    thing:hooked(self)
     
     self.caught = thing
     self.hookJoint = physics.joint(DISTANCE, 
