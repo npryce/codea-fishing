@@ -135,7 +135,16 @@ function Angler:draw()
              joint.anchorB.x, joint.anchorB.y)
     end
     
-    sprite("Tyrian Remastered:Organic Claw", self.hook.x, self.hook.y-10)
+    pushMatrix()
+    translate(self.hook.x, self.hook.y)
+    if self.hookJoint then
+        local j = self.hookJoint
+        local d = j.anchorB - j.anchorA
+        local a = vec2(0,-1):angleBetween(d)
+        rotate(math.deg(a))
+    end
+    sprite("Tyrian Remastered:Organic Claw", 0, -10)
+    popMatrix()
     
     if DEBUG > 0 then
         ellipseMode(RADIUS)

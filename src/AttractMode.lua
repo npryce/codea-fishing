@@ -2,6 +2,16 @@ AttractMode = class()
 
 AttractMode.titleColor = color(255, 0, 92, 255)
 AttractMode.waterHeight = HEIGHT
+AttractMode.help = {
+    "Take the junk out of the river with your line.",
+    "Bumping junk that you have caught will dislodge it from your line.",
+    "Don't catch the fish with your line.",
+    "If you catch a fish, dislodge it from your line and it will swim away.",  
+    "When all the fish have swum away, the game is over.", 
+    "One-finger Controls",
+    "left/right moves the angler",
+    "up/down reels the line in/out"
+}
 
 function AttractMode:start()
     self.fish = PhysicalGroup()

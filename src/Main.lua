@@ -2,7 +2,6 @@
 
 -- TODO
 -- 
--- hook points at center of hooked thing
 -- angler wears crown when have hiscore
 -- flotsam moves faster as score gets higher
 -- more flotsam created as score increases
@@ -16,7 +15,7 @@ DEBUG=0
 iparameter("DEBUG", 0, 1)
 
 supportedOrientations(LANDSCAPE_ANY)
---displayMode(FULLSCREEN)
+displayMode(FULLSCREEN)
 
 function setup()
     Fish.setup()
