@@ -13,7 +13,7 @@ DEBUG=0
 iparameter("DEBUG", 0, 1)
 
 supportedOrientations(LANDSCAPE_ANY)
---displayMode(FULLSCREEN)
+displayMode(FULLSCREEN)
 
 function setup()
     Fish.setup()
