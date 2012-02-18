@@ -8,9 +8,8 @@ AttractMode.help = {
     "Don't catch the fish with your line.",
     "If you catch a fish, dislodge it from your line and it will swim away.",  
     "When all the fish have swum away, the game is over.", 
-    "One-finger Controls",
-    "left/right moves the angler",
-    "up/down reels the line in/out"
+    "1-Finger Controls: left/right moves the angler, up/down reels the line in/out",
+    "Tap to start",
 }
 
 function AttractMode:start()
@@ -19,11 +18,21 @@ function AttractMode:start()
         self.fish:add(Fish(self))
     end
     
+    self.help = Banner {
+        font = "PartyLetPlain",
+        fontSize = 40,
+        fill = self.titleColor,
+        lines = self.help,
+        pos = vec2(WIDTH/2, HEIGHT/4)
+    }
+    
     self.highscore = readHighscore()
 end
 
 function AttractMode:animate(dt)
+    self.help:animate(dt)
     self.fish:animate(dt)
+    
     if self.fish:isEmpty() then
         switchMode(PlayMode())
     end
@@ -46,13 +55,14 @@ function AttractMode:draw()
     textWrapWidth(WIDTH)
     fill(self.titleColor)
     fontSize(132)
-    sillyText("Help the Fish", WIDTH/2, 2*HEIGHT/3)
+    sillyText("Help the Fish", WIDTH/2, 11*HEIGHT/16)
+    
+    pushStyle()
+    self.help:draw()
+    popStyle()
     
     fontSize(40)
-    sillyText("Highscore - " .. self.highscore, WIDTH/2, 7*HEIGHT/16)
-        
-    fontSize(80)
-    sillyText("Tap to Start", WIDTH/2, HEIGHT/4)
+    sillyText("Highscore: " .. self.highscore, WIDTH/2, 7*HEIGHT/16)
 end
 
 function sillyText(str, x, y)

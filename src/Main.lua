@@ -1,9 +1,7 @@
 -- Main
 
--- TODO
--- why do flotsam disappear?
--- angler wears crown when have hiscore
--- flotsam moves faster as score gets higher
+-- TODO:
+-- flotsam &/or fish move faster as score gets higher
 -- more flotsam created as score increases
 -- bonus flotsam creates a new fish (or other effects) when landed
 -- water ripple effect
@@ -15,7 +13,7 @@ DEBUG=0
 iparameter("DEBUG", 0, 1)
 
 supportedOrientations(LANDSCAPE_ANY)
-displayMode(FULLSCREEN)
+--displayMode(FULLSCREEN)
 
 function setup()
     Fish.setup()

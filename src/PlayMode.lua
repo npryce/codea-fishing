@@ -121,11 +121,15 @@ function PlayMode:flotsamLanded(flotsam)
         flotsam.body.position, 
         vec2(WIDTH-16-(sw/2), HEIGHT-16-(sh/2))))
         
-    flotsam:relaunch()
+    flotsam:launch()
 end
 
-function PlayMode:flotsamEscaped(flotsam)
-    self.scoreMultiplier = 1
+function PlayMode:flotsamEscaped(flotsam, p)
+    if p.x < 0 then
+        self.scoreMultiplier = 1
+    end
+    
+    flotsam:launch()
 end
 
 function PlayMode:fishEscaped(fish)
