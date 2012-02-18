@@ -4,7 +4,7 @@ AttractMode.titleColor = color(255, 0, 92, 255)
 AttractMode.waterHeight = HEIGHT
 
 function AttractMode:start()
-    self.fish = Group()
+    self.fish = PhysicalGroup()
     for i = 1, 12 do
         self.fish:add(Fish(self))
     end

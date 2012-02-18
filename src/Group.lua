@@ -1,4 +1,5 @@
--- Collections of game objects indexed by body (to work around bug in Codea v1.3)
+-- Collections of game objects.
+-- PhysicalGroups are indexed by body (to work around bug in Codea v1.3)
 
 do
     Group = class()
@@ -13,7 +14,7 @@ do
     end
     
     function Group:add(thing)
-        self.things[thing.body] = thing
+        table.insert(self.things, thing)
         self.count = self.count + 1
     end
     
@@ -74,5 +75,17 @@ do
     
     function Group:isAlive()
         return self.mortal and not self:isEmpty()
+    end
+    
+    
+    PhysicalGroup = class(Group)
+    
+    function PhysicalGroup:add(thing)
+        self.things[thing.body] = thing
+        self.count = self.count + 1
+    end
+    
+    function PhysicalGroup:destroy()
+        self:each(function (thing) thing:destroy() end)
     end
 end

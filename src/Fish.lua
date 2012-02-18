@@ -52,12 +52,12 @@ function Fish:draw()
     spriteMode(CENTER)
     pushMatrix()
     translate(self.body.position.x, self.body.position.y)
+    
+    local sx = scalex(self.body.linearVelocity)
     if self.state == self.hookedState then
-        translate(0, -16)
-        rotate(-90)
-    else
-        scale(scalex(self.body.linearVelocity), 1)
+        sx = sx * -1
     end
+    scale(sx, 1)
     translate(0, self.spriteYOffset)
     sprite(self.image, 0, 0)
     popMatrix()
@@ -160,6 +160,7 @@ end
 
 function Fish:swimAway(dangerPoint)
     self.state = self.escapedState
-    self:startSwimmingTo(self:randomOffscreenPositionAwayFrom(dangerPoint))
+    self:startSwimmingTo(
+        self:randomOffscreenPositionAwayFrom(dangerPoint))
     self.body.mask = self.escapingMask
 end

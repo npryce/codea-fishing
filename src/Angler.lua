@@ -2,11 +2,11 @@ Angler = class()
 
 Angler.divisions = 25
 Angler.maxVelocity = vec2(WIDTH/2,0)
-Angler.maxLength = WATER_HEIGHT
 Angler.reelTime = 0.5 -- time in secs to reel fully in or out
 Angler.radius = 40
 
 function Angler:init(pos)
+    self.maxLength = pos.y
     self.length = self.maxLength/2
     self.reelRate = 0
     local linkLength = self.length/self.divisions

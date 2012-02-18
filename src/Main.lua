@@ -3,7 +3,6 @@
 -- TODO
 -- 
 -- hook points at center of hooked thing
--- hiscore, show hiscore on attract screen, save hiscore
 -- angler wears crown when have hiscore
 -- flotsam moves faster as score gets higher
 -- more flotsam created as score increases
@@ -14,15 +13,12 @@
 
 
 DEBUG=0
+iparameter("DEBUG", 0, 1)
 
 supportedOrientations(LANDSCAPE_ANY)
-
-hiscore = 10
+--displayMode(FULLSCREEN)
 
 function setup()
-    iparameter("DEBUG", 0, 1)
-    displayMode(FULLSCREEN)
-    
     Fish.setup()
     Flotsam.setup()
     
@@ -52,7 +48,7 @@ function collide(c)
 end
 
 function readHighscore()
-    return readLocalData("highscore", 10)
+    return readLocalData("highscore", 1)
 end
 
 function saveHighscore(newHighscore)

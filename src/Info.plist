@@ -14,8 +14,9 @@
 		<string>Angler</string>
 		<string>Fish</string>
 		<string>Flotsam</string>
+		<string>Particle</string>
+		<string>SpinningSprite</string>
 		<string>Group</string>
-		<string>Repeater</string>
 		<string>FontToImage</string>
 		<string>Controller</string>
 		<string>ControllerSplitScreen</string>

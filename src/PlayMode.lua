@@ -1,23 +1,23 @@
 PlayMode = class()
 
-PlayMode.waterHeight = WATER_HEIGHT
+PlayMode.waterHeight = HEIGHT-160
 
 function PlayMode:start()
     self.caughtCount = 0
     self.score = 0
     self.scoreMultiplier = 1
     
-    self.hiscore = readHighscore()
+    self.highscore = readHighscore()
     self.fishCount = 3
     
     self.edge = physics.body(EDGE, 
-            vec2(0,WATER_HEIGHT), vec2(WIDTH, WATER_HEIGHT))
+            vec2(0,self.waterHeight), vec2(WIDTH, self.waterHeight))
     self.edge.type = STATIC
     self.edge.categories = {CATEGORY_EDGE}
     
     self.player = Angler(vec2(WIDTH/2, HEIGHT-80))
-    self.stuff = Group()
-    self.bodyOwners = {}
+    self.stuff = PhysicalGroup()
+    self.effects = Group()
     
     for i = 1, self.fishCount do
         self.stuff:add(Fish(self))
@@ -62,6 +62,7 @@ end
 function PlayMode:animate(dt)
     self.player:animate(dt)
     self.stuff:animate(dt)
+    self.effects:animate(dt)
 end
 
 function PlayMode:draw()
@@ -70,6 +71,7 @@ function PlayMode:draw()
     drawDock()
     self.stuff:draw()
     self.player:draw()
+    self.effects:draw()
     
     if DEBUG > 0 then
         stroke(255, 0, 0, 255)
@@ -109,6 +111,13 @@ function PlayMode:flotsamLanded(flotsam)
     self.caughtCount = self.caughtCount + 1
     self.score = self.score + self.scoreMultiplier
     self.scoreMultiplier = self.scoreMultiplier + 1
+    
+    fontSize(64)
+    sw, sh = textSize(self.score)
+    self.effects:add(SpinningSprite(
+        flotsam.image, 
+        flotsam.body.position, 
+        vec2(HEIGHT-16-sw/2, HEIGHT-16-sh/2)))
 end
 
 function PlayMode:flotsamEscaped(flotsam)
@@ -125,10 +134,15 @@ function PlayMode:fishEscaped(fish)
 end
 
 function PlayMode:stop()
-    -- not required
+    self.player:steer(0)
+    self.player:reel(0)
+    
+    if self.score > self.highscore then
+        saveHighscore(self.score)
+    end
 end
 
 function PlayMode:destroy()
     self.player:destroy()
-    self.stuff:each(function (x) x:destroy() end)
+    self.stuff:destroy()
 end

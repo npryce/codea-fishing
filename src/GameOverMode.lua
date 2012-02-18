@@ -5,7 +5,7 @@ function GameOverMode:init(playMode)
 end
 
 function GameOverMode:start()
-    self.inactiveTimer = 5 -- seconds
+    self.inactiveTimer = 2 -- seconds
 end
 
 function GameOverMode:animate(dt)

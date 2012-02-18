@@ -1,6 +1,7 @@
 Flotsam = class()
 Flotsam.floatingMask = {CATEGORY_LINE, CATEGORY_FLOATING, CATEGORY_EDGE}
 Flotsam.hookedMask = {CATEGORY_LINE, CATEGORY_FLOATING}
+Flotsam.radius = 20
 
 function Flotsam.setup()
     Flotsam.bonuses = map(emojiToImage, {
@@ -57,19 +58,19 @@ function Flotsam:animate(dt)
     local p = self.body.position
     
     if self.hooker then
-        if p.y > (self.game.waterHeight+32) then
+        if p.y > (self.game.waterHeight+self.radius) then
             self.hooker:maybeRelease(self)
             self.game:flotsamLanded(self)
             self:relaunch()
         end
     else
         if self.hasBeenOnscreen or self.body.linearVelocity.x >= 0 then
-            if not isOnscreen(p, -32) then
+            if not isOnscreen(p, -self.radius) then
                 self.game:flotsamEscaped(self)
                 self:relaunch()
             end
         else
-            self.hasBeenOnScreen = isOnscreen(p, 32)
+            self.hasBeenOnScreen = isOnscreen(p, self.radius)
         end
     end 
 end
