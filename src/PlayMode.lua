@@ -108,6 +108,8 @@ function PlayMode:drawEdge(body)
 end
 
 function PlayMode:flotsamLanded(flotsam)
+    self.player:maybeRelease(flotsam)
+    
     self.caughtCount = self.caughtCount + 1
     self.score = self.score + self.scoreMultiplier
     self.scoreMultiplier = self.scoreMultiplier + 1
@@ -117,7 +119,9 @@ function PlayMode:flotsamLanded(flotsam)
     self.effects:add(SpinningSprite(
         flotsam.image, 
         flotsam.body.position, 
-        vec2(HEIGHT-16-sw/2, HEIGHT-16-sh/2)))
+        vec2(WIDTH-16-(sw/2), HEIGHT-16-(sh/2))))
+        
+    flotsam:relaunch()
 end
 
 function PlayMode:flotsamEscaped(flotsam)

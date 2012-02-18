@@ -1,7 +1,7 @@
 -- Main
 
 -- TODO
--- 
+-- why do flotsam disappear?
 -- angler wears crown when have hiscore
 -- flotsam moves faster as score gets higher
 -- more flotsam created as score increases

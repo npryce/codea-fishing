@@ -25,8 +25,16 @@ function Flotsam:init(game)
 end
 
 function Flotsam:relaunch()
-    self.body.position = vec2(WIDTH+32 + math.random(0, WIDTH/2), math.random(0, HEIGHT-180))
-    self.body.linearVelocity = vec2(-math.random(10, 50), 0)
+    local pos = vec2(WIDTH+self.radius, 
+                     math.random(self.radius, self.game.waterHeight-self.radius))
+    local vel = vec2(-math.random(10, 50), 0)
+    
+    self:launch(pos, vel)
+end
+
+function Flotsam:launch(pos, vel)
+    self.body.position = pos
+    self.body.linearVelocity = vel
     
     self.isBonus = math.random() < 0.1
     
@@ -51,6 +59,12 @@ function Flotsam:draw()
         stroke(0, 255, 0, 255)
         noFill()
         ellipse(self.body.x, self.body.y, self.body.radius)
+        
+        if not isOnscreen(self.body.position, -self.radius) then
+            stroke(255, 246, 0, 178)
+            strokeWidth(5)
+            line(WIDTH/2, HEIGHT/2, self.body.x, self.body.y)
+        end
     end
 end
 
@@ -59,9 +73,7 @@ function Flotsam:animate(dt)
     
     if self.hooker then
         if p.y > (self.game.waterHeight+self.radius) then
-            self.hooker:maybeRelease(self)
             self.game:flotsamLanded(self)
-            self:relaunch()
         end
     else
         if self.hasBeenOnscreen or self.body.linearVelocity.x >= 0 then
