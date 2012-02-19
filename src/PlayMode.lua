@@ -85,15 +85,23 @@ end
 function PlayMode:drawScore()
     textMode(CORNER)
     font("DB LCD Temp")
-    fill(255, 255, 255, 202)
+    local alpha = 202
+    
+    if self.score > self.highscore then
+        fill(255, 242, 0, alpha)
+    else
+        fill(255, 255, 255, alpha)
+    end
+    
+    local scoreText = self.score
     
     fontSize(64)
-    sw, sh = textSize(self.score)
-    text(self.score, WIDTH-(sw+16), HEIGHT-(sh+16))
-    
+    local sw, sh = textSize(scoreText)
+    text(scoreText, WIDTH-(sw+16), HEIGHT-(sh+16))
+        
     fontSize(24)
     local multiplierText = "x"..self.scoreMultiplier
-    mw, mh = textSize(multiplierText)
+    local mw, mh = textSize(multiplierText)
     text(multiplierText, WIDTH-(mw+16), HEIGHT-(sh+16+mh))
 end
 

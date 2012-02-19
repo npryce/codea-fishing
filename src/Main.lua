@@ -16,6 +16,8 @@ supportedOrientations(LANDSCAPE_ANY)
 displayMode(FULLSCREEN)
 
 function setup()
+    --saveHighscore(0) -- uncomment to clear highscore for testing
+    
     Fish.setup()
     Flotsam.setup()
     

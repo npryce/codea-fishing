@@ -13,16 +13,12 @@ function Particle:draw()
     local c = blendColor(self.initialColor, self.finalColor, 
                          self.age/self.lifespan)
     
-    pushStyle()
-    
     fill(c)
     stroke(c)
     noStroke()
     rectMode(CENTER)
     
     rect(self.pos.x, self.pos.y, 3, 3)
-    
-    popStyle()
 end
 
 function Particle:isAlive()
