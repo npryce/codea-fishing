@@ -76,4 +76,8 @@ function subdivide(count, start, finish)
     return list
 end
 
+function const(x)
+    return x
+end
+
 

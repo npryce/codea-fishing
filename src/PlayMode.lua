@@ -6,7 +6,6 @@ function PlayMode:start()
     self.caughtCount = 0
     self.score = 0
     self.scoreMultiplier = 1
-    
     self.highscore = readHighscore()
     self.fishCount = 3
     
@@ -39,6 +38,10 @@ function PlayMode:start()
             released = function(y) self.player:reel(0) end
         }
     }
+end
+
+function PlayMode:hookPosition()
+    return self.player:hookPosition()
 end
 
 function PlayMode:touched(t)
@@ -74,12 +77,14 @@ function PlayMode:draw()
     self.effects:draw()
     
     if DEBUG > 0 then
-        stroke(255, 0, 0, 255)
-        self.controller:draw()
-        self:drawEdge(self.edge)
+        self:drawDebug()
     end
     
     self:drawScore()
+end
+
+function PlayMode:totalScoreMultiplier()
+    return self.scoreMultiplier * self.fishCount
 end
 
 function PlayMode:drawScore()
@@ -100,12 +105,20 @@ function PlayMode:drawScore()
     text(scoreText, WIDTH-(sw+16), HEIGHT-(sh+16))
         
     fontSize(24)
-    local multiplierText = "x"..self.scoreMultiplier
+    local multiplierText = "x"..self:totalScoreMultiplier()
     local mw, mh = textSize(multiplierText)
     text(multiplierText, WIDTH-(mw+16), HEIGHT-(sh+16+mh))
 end
 
+function PlayMode:drawDebug()
+    self.player:drawDebug()
+    self.stuff:drawDebug()
+    self.controller:draw()
+    self:drawEdge(self.edge)
+end
+
 function PlayMode:drawEdge(body)
+    stroke(0, 255, 0, 255)
     strokeWidth(5.0)
     local points = body.points
     for j = 1,#points-1 do
@@ -119,7 +132,7 @@ function PlayMode:flotsamLanded(flotsam)
     self.player:maybeRelease(flotsam)
     
     self.caughtCount = self.caughtCount + 1
-    self.score = self.score + self.scoreMultiplier
+    self.score = self.score + self:totalScoreMultiplier()
     self.scoreMultiplier = self.scoreMultiplier + 1
     
     fontSize(64)

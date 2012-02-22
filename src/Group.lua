@@ -59,6 +59,16 @@ do
         end)
     end
     
+    function Group:drawDebug()
+        self:each(function (d) 
+            pushMatrix()
+            pushStyle()
+            d:drawDebug()
+            popStyle()
+            popMatrix()
+        end)
+    end
+    
     function Group:bounds()
         local function mergeBounds(bounds, thing)
             return Bounds.merge(

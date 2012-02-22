@@ -4,8 +4,6 @@ CATEGORY_EDGE = 1
 CATEGORY_LINE = 2
 CATEGORY_FLOATING = 3
 
---WATER_HEIGHT = HEIGHT-160
-
 
 function drawDock()
     local dockImage = "Planet Cute:Grass Block"

@@ -4,13 +4,14 @@ AttractMode.titleColor = color(255, 0, 92, 255)
 AttractMode.waterHeight = HEIGHT
 AttractMode.help = {
     "Take the junk out of the river with your line.",
+    "One-finger controls: left & right moves the angler, up & down reels the line in/out.",
     "Bumping junk that you have caught will dislodge it from your line.",
     "Don't catch the fish with your line.",
     "If you catch a fish, dislodge it from your line and it will swim away.",  
-    "When all the fish have swum away, the game is over.", 
-    "1-Finger Controls: left/right moves the angler, up/down reels the line in/out",
-    "Tap to start",
+    "When all the fish have swum away, the game is over.",
+    "Don't let any junk float downstream to earn a higher score multiplier."
 }
+AttractMode.caughtCount = 0 -- currently used by fish drawDebug, should find better way
 
 function AttractMode:start()
     self.fish = PhysicalGroup()
@@ -60,9 +61,13 @@ function AttractMode:draw()
     pushStyle()
     self.help:draw()
     popStyle()
-    
     fontSize(40)
-    sillyText("Highscore: " .. self.highscore, WIDTH/2, 7*HEIGHT/16)
+    text("Tap to Start", self.help.pos.x, self.help.pos.y-48)
+    text("Highscore: " .. self.highscore, WIDTH/2, 7*HEIGHT/16)
+end
+
+function AttractMode:drawDebug()
+    self.fish:drawDebug()
 end
 
 function sillyText(str, x, y)

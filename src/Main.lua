@@ -2,9 +2,11 @@
 
 -- TODO:
 -- flotsam &/or fish move faster as score gets higher
--- more flotsam created as score increases
--- bonus flotsam creates a new fish (or other effects) when landed
+-- bonus flotsam creates a new fish (or other benefit) when landed
 -- water ripple effect
+-- effect when player gets the highscore
+-- show on game over screen is player got the highscore
+-- emit bubbles (particles) when actors collide
 -- sfx
 -- custom spritepack
 
@@ -34,10 +36,17 @@ end
 function draw()
     mode:animate(DeltaTime)
     mode:draw()
+    if DEBUG > 0 then
+        mode:drawDebug()
+    end
 end
 
 function touched(t)
-    mode:touched(t)
+    if t.state == BEGAN and t.tapCount == 3 and t.x < 64 and t.y >= (HEIGHT-64) then
+        DEBUG = 1 - DEBUG
+    else
+        mode:touched(t)
+    end
 end
 
 function collide(c)

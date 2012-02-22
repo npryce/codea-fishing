@@ -18,6 +18,7 @@ function GameOverMode:draw()
     
     noSmooth()
     rectMode(CORNER)
+    noStroke()
     fill(0, 0, 0, 80)
     rect(0, 0, WIDTH, HEIGHT)
     
@@ -33,6 +34,10 @@ function GameOverMode:draw()
         fontSize(80)
         sillyText("Tap to Continue", WIDTH/2, HEIGHT/4)
     end
+end
+
+function GameOverMode:drawDebug()
+    self.playMode:drawDebug()
 end
 
 function GameOverMode:touched(t)

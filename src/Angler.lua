@@ -47,6 +47,10 @@ function Angler:init(pos)
     end
 end
 
+function Angler:hookPosition()
+    return self.hook.position
+end
+
 function Angler:destroy()
     if self.hookJoint then
         self.hookJoint:destroy()
@@ -146,16 +150,16 @@ function Angler:draw()
     sprite("Tyrian Remastered:Organic Claw", 0, -10)
     popMatrix()
     
-    if DEBUG > 0 then
-        ellipseMode(RADIUS)
-        fill(255, 0, 0, 255)
-        stroke(255, 0, 0, 255)
-        noStroke()
-        
-        ellipse(self.hook.x, self.hook.y, self.hook.radius)
-    end
-    
     popStyle()
     popMatrix()
+end
+
+function Angler:drawDebug()
+    ellipseMode(RADIUS)
+    fill(255, 0, 0, 255)
+    stroke(255, 0, 0, 255)
+    noStroke()
+        
+    ellipse(self.hook.x, self.hook.y, self.hook.radius)
 end
 

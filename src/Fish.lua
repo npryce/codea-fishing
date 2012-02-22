@@ -1,19 +1,16 @@
 Fish = class()
 Fish.radius = 20
 Fish.spacing = 2*Fish.radius
-Fish.startX = {-Fish.spacing, WIDTH+Fish.spacing}
 Fish.minSpeed = 25
 Fish.maxSpeed = 100
 Fish.spriteYOffset = -8 -- to compensate for emoji font
 Fish.swimmingMask = {CATEGORY_LINE, CATEGORY_FLOATING}
 Fish.escapingMask = {CATEGORY_FLOATING}
 
-Fish.swimmingState = 1
-Fish.hookedState = 2
-Fish.escapedState = 3
 
 function Fish.setup()
     Fish.images = map(emojiToImage, {"🐟","🐠"})
+    Fish.startX = {-Fish.spacing, WIDTH+Fish.spacing}
 end
 
 function Fish:init(game)
@@ -35,65 +32,29 @@ function Fish:isAlive()
     return self.body ~= nil
 end
 
+function Fish:hookSensorRadius()
+    return self.radius * self.game.caughtCount
+end
+
 function Fish:destroy()
     self.body:destroy()
     self.body = nil
-end
-
-function Fish:draw()
-    local function scalex(vel)
-        if vel.x > 0 then
-            return -1
-        else
-            return 1
-        end
-    end
-    
-    spriteMode(CENTER)
-    pushMatrix()
-    translate(self.body.position.x, self.body.position.y)
-    
-    local sx = scalex(self.body.linearVelocity)
-    if self.state == self.hookedState then
-        sx = sx * -1
-    end
-    scale(sx, 1)
-    translate(0, self.spriteYOffset)
-    sprite(self.image, 0, 0)
-    popMatrix()
-    
-    if DEBUG > 0 then
-        local body = self.body
-        
-        ellipseMode(RADIUS)
-        strokeWidth(4)
-        stroke(0, 255, 0, 255)
-        noFill()
-        ellipse(body.x, body.y, body.radius)
-        
-        if self.state ~= self.hookedState then
-            noStroke()
-            fill(255, 0, 0, 255)
-            ellipse(self.target.x, self.target.y, 4)
-            strokeWidth(6)
-            stroke(255, 0, 0, 255)
-            line(body.x, body.y, self.target.x, self.target.y)
-        end
-    end
 end
 
 function Fish:startSwimmingTo(pos)
     self.target = pos
     
     local direction = (pos - self.body.position):normalize()
-    local speed
-    if self.state == self.escapedState then
-        speed = self.maxSpeed * 5
-    else
-        speed = math.random(self.minSpeed, self.maxSpeed)
-    end
-    
+    local speed = self.state.speed(self)
     self.body.linearVelocity = direction * speed
+end
+
+
+function Fish:asNearTheHookAsPossible()
+    local hookp = self.game:hookPosition()
+    
+    return vec2(clamp(hookp.x, 0, WIDTH), 
+                clamp(hookp.y, 0, self.game.waterHeight))
 end
 
 function Fish:randomWaterPosition()
@@ -120,19 +81,45 @@ function Fish:randomOffscreenPositionAwayFrom(fromPoint)
 end
 
 function Fish:animate(dt)
-    if self.state == self.escapedState and self:isOffscreen() then
+    self.state.animate(self)
+end
+
+function Fish:animateWhenSwimming()
+    if self:needsNewTarget() then
+        self:startSwimmingTo(self:newTarget())
+    end
+end
+
+function Fish:newTarget()
+    if self:canSenseHook() then
+        return self:asNearTheHookAsPossible()
+    else
+        return self:randomWaterPosition()
+    end
+end
+
+-- A bit of a hack: the behaviour in the AttractMode should really be modelled by a
+-- distinct state
+function Fish:canSenseHook()
+    if self.game.hookPosition then
+        local distanceToHookSq = self.body.position:distSqr(self.game:hookPosition())
+        return distanceToHookSq <= self:hookSensorRadius()^2
+    else
+        return false
+    end
+end
+
+function Fish:animateWhenEscaping()
+    if self:isOffscreen() then
         self.game:fishEscaped(self)
         self:destroy()
-    elseif self.state ~= self.hookedState and self:needsNewTarget() then
-        local pos
-        if self.state == self.swimmingState then
-            pos = self:randomWaterPosition()
-        else
-            pos = self:randomOffscreenPositionAwayFrom(vec2(WIDTH/2, HEIGHT/2))
-        end
-        
-        self:startSwimmingTo(pos)
+    elseif self:needsNewTarget() then
+        self:startSwimmingTo(
+            self:randomOffscreenPositionAwayFrom(vec2(WIDTH,HEIGHT)/2))
     end
+end
+
+function Fish:animateWhenHooked()
 end
 
 function Fish:isOffscreen()
@@ -159,8 +146,79 @@ function Fish:unhooked()
 end
 
 function Fish:swimAway(dangerPoint)
-    self.state = self.escapedState
+    self.state = self.escapingState
     self:startSwimmingTo(
         self:randomOffscreenPositionAwayFrom(dangerPoint))
     self.body.mask = self.escapingMask
 end
+
+function Fish:randomLeisurelySpeed()
+    return math.random(self.minSpeed, self.maxSpeed)
+end
+
+function Fish:madDashSpeed()
+    return self.maxSpeed * 5
+end
+
+Fish.swimmingState = {
+    xflip = -1,
+    drawDebugTarget = true,
+    speed = Fish.randomLeisurelySpeed,
+    animate = Fish.animateWhenSwimming
+}
+
+Fish.hookedState = {
+    xflip = 1,
+    drawDebugTarget = false,
+    speed = function(fish) return 0 end,
+    animate = Fish.animateWhenHooked
+}
+
+Fish.escapingState = {
+    xflip = -1,
+    drawDebugTarget = true,
+    speed = Fish.madDashSpeed,
+    animate = Fish.animateWhenEscaping
+}
+
+function Fish:draw()
+    local function scalex(vel)
+        if vel.x > 0 then
+            return 1
+        else
+            return -1
+        end
+    end
+    
+    spriteMode(CENTER)
+    pushMatrix()
+    translate(self.body.position.x, self.body.position.y)
+    
+    local sx = self.state.xflip * scalex(self.body.linearVelocity)
+    scale(sx, 1)
+    translate(0, self.spriteYOffset)
+    sprite(self.image, 0, 0)
+    popMatrix()
+end
+
+function Fish:drawDebug()
+    local body = self.body
+        
+    ellipseMode(RADIUS)
+    noFill()
+    strokeWidth(4)
+    stroke(0, 255, 0, 255)
+    ellipse(body.x, body.y, body.radius)
+    stroke(255, 255, 0, 255)
+    ellipse(body.x, body.y, self:hookSensorRadius())
+    
+    if self.state.drawDebugTarget then
+        noStroke()
+        fill(255, 0, 0, 255)
+        ellipse(self.target.x, self.target.y, 4)
+        strokeWidth(6)
+        stroke(255, 0, 0, 255)
+        line(body.x, body.y, self.target.x, self.target.y)
+    end
+end
+

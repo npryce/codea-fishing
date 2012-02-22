@@ -9,6 +9,8 @@ function Flotsam.setup()
         "👟","👡", "👠", "👢", "⚽", "🎫", "💀", "🐚", 
         "🍁", "🌸", "🌺", "🍟",
         "🌂","🎺","👜","💼", "🎒"})
+        
+    Flotsam.images = Flotsam.junk
 end
 
 function Flotsam:init(game)
@@ -24,7 +26,7 @@ function Flotsam:init(game)
 end
 
 function Flotsam:launch()
-    self.image = randomElement(self.junk)
+    self.image = randomElement(self.images)
     self.radius = math.max(self.image.width, self.image.height)
     self.radius = 16
     local pos = vec2(WIDTH+self.radius, 
@@ -69,14 +71,14 @@ end
 function Flotsam:draw()
     spriteMode(CENTER)
     sprite(self.image, self.body.x, self.body.y-8)
-    
-    if DEBUG > 0 then
-        ellipseMode(RADIUS)
-        strokeWidth(4)
-        stroke(0, 255, 0, 255)
-        noFill()
-        ellipse(self.body.x, self.body.y, self.body.radius)
-    end
+end
+
+function Flotsam:drawDebug()
+    ellipseMode(RADIUS)
+    strokeWidth(4)
+    stroke(0, 255, 0, 255)
+    noFill()
+    ellipse(self.body.x, self.body.y, self.body.radius)
 end
 
 function Flotsam:destroy()
