@@ -4,9 +4,7 @@
 -- flotsam &/or fish move faster as score gets higher
 -- bonus flotsam creates a new fish (or other benefit) when landed
 -- water ripple effect
--- effect when player gets the highscore
--- show on game over screen is player got the highscore
--- emit bubbles (particles) when actors collide
+-- show on game over screen if player got the highscore
 -- sfx
 -- custom spritepack
 

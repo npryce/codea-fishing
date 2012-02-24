@@ -1,6 +1,8 @@
 PlayMode = class()
 
 PlayMode.waterHeight = HEIGHT-160
+PlayMode.scoreAlpha = 202
+PlayMode.highscoreColor = color(255, 242, 0, PlayMode.scoreAlpha)
 
 function PlayMode:start()
     self.caughtCount = 0
@@ -40,6 +42,23 @@ function PlayMode:start()
     }
 end
 
+function PlayMode:createBubble(pos, vel)
+    function bubbleIsAlive(b)
+        return Particle.isAlive(b) and b.pos.y < self.waterHeight
+    end
+    
+    self.effects:add(Particle {
+        pos = pos,
+        vel = vel or vec2(0,0),
+        acc = vec2(0, 100),
+        drag = 0.1,
+        isAlive = bubbleIsAlive,
+        initialColor = color(255, 255, 255, 255),
+        finalColor = color(255, 255, 255, 0),
+        lifespan = 10
+    })
+end
+
 function PlayMode:hookPosition()
     return self.player:hookPosition()
 end
@@ -59,6 +78,7 @@ function PlayMode:collide(c)
     elseif actorA and actorB then
         self.player:maybeRelease(actorA)
         self.player:maybeRelease(actorB)
+        self:createBubble(c.position)
     end
 end
 
@@ -93,9 +113,9 @@ function PlayMode:drawScore()
     local alpha = 202
     
     if self.score > self.highscore then
-        fill(255, 242, 0, alpha)
+        fill(self.highscoreColor)
     else
-        fill(255, 255, 255, alpha)
+        fill(255, 255, 255, self.scoreAlpha)
     end
     
     local scoreText = self.score
@@ -131,17 +151,45 @@ end
 function PlayMode:flotsamLanded(flotsam)
     self.player:maybeRelease(flotsam)
     
+    local hadHighscore = self.score > self.highscore
+    
     self.caughtCount = self.caughtCount + 1
     self.score = self.score + self:totalScoreMultiplier()
     self.scoreMultiplier = self.scoreMultiplier + 1
     
+    local hasHighscore = self.score > self.highscore
+    
     fontSize(64)
-    sw, sh = textSize(self.score)
-    self.effects:add(SpinningSprite(
-        flotsam.image, 
-        flotsam.body.position, 
-        vec2(WIDTH-16-(sw/2), HEIGHT-16-(sh/2))))
-        
+    local sw, sh = textSize(self.score)
+    local sx = WIDTH - 16 - sw
+    local sy = HEIGHT - 16 - sh
+    local mid = vec2(sx+sw/2, sy+sh/2)
+    
+    self.effects:add(SpinningSprite(flotsam.image, flotsam.body.position, mid))   
+    
+    function createHighscoreSpark(x, y)
+        local p = vec2(x,y)
+        self.effects:add(Particle {
+            pos = p,
+            vel = (p-mid):normalize() * math.random(10,40),
+            acc = vec2(0, -10),
+            lifespan = 1,
+            initialColor = alpha(self.highscoreColor, 255),
+            finalColor = alpha(self.highscoreColor, 0)
+        })
+    end
+    
+    if hasHighscore and not hadHighscore then
+        for px = 0, sw, 8 do
+            createHighscoreSpark(sx+px,sy)
+            createHighscoreSpark(sx+px,sy+sh)
+        end
+        for py = 0, sh, 8 do
+            createHighscoreSpark(sx,sy+py)
+            createHighscoreSpark(sx+sw,sy+py)
+        end
+    end
+    
     flotsam:launch()
 end
 
