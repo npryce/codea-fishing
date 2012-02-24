@@ -78,7 +78,9 @@ function PlayMode:collide(c)
     elseif actorA and actorB then
         self.player:maybeRelease(actorA)
         self.player:maybeRelease(actorB)
+        
         self:createBubble(c.position)
+        sound(DATA, "ZgJAHgAzVztIAABPAAAAABzxzD4AAAAAXQA5Vh1AK0I8OmZQ")
     end
 end
 
@@ -165,21 +167,22 @@ function PlayMode:flotsamLanded(flotsam)
     local sy = HEIGHT - 16 - sh
     local mid = vec2(sx+sw/2, sy+sh/2)
     
-    self.effects:add(SpinningSprite(flotsam.image, flotsam.body.position, mid))   
-    
-    function createHighscoreSpark(x, y)
-        local p = vec2(x,y)
-        self.effects:add(Particle {
-            pos = p,
-            vel = (p-mid):normalize() * math.random(10,40),
-            acc = vec2(0, -10),
-            lifespan = 1,
-            initialColor = alpha(self.highscoreColor, 255),
-            finalColor = alpha(self.highscoreColor, 0)
-        })
-    end
+    self.effects:add(
+        SpinningSprite(flotsam.image, flotsam.body.position, mid))   
     
     if hasHighscore and not hadHighscore then
+        local function createHighscoreSpark(x, y)
+            local p = vec2(x,y)
+            self.effects:add(Particle {
+                pos = p,
+                vel = (p-mid):normalize() * math.random(10,40),
+                acc = vec2(0, -10),
+                lifespan = 1,
+                initialColor = alpha(self.highscoreColor, 255),
+                finalColor = alpha(self.highscoreColor, 0)
+            })
+        end
+        
         for px = 0, sw, 8 do
             createHighscoreSpark(sx+px,sy)
             createHighscoreSpark(sx+px,sy+sh)
@@ -188,7 +191,12 @@ function PlayMode:flotsamLanded(flotsam)
             createHighscoreSpark(sx,sy+py)
             createHighscoreSpark(sx+sw,sy+py)
         end
+        
+        sound(DATA, "ZgFAPwA/PxM4ailttTSCvUPHjT7EgQS/SABYR0BAPj5ATR5m")
+    else
+        sound(DATA, "ZgBAMgBAPhw/P3xBGODOve1ExD7wpXW9SwBQVBFCPT5CPHFd")
     end
+    
     
     flotsam:launch()
 end
