@@ -5,7 +5,6 @@
 -- bonus flotsam creates a new fish (or other benefit) when landed
 -- water ripple effect
 -- show on game over screen if player got the highscore
--- sfx
 -- custom spritepack
 
 
@@ -16,7 +15,7 @@ supportedOrientations(LANDSCAPE_ANY)
 displayMode(FULLSCREEN)
 
 function setup()
-    --saveHighscore(0) -- uncomment to clear highscore for testing
+    --saveHighscore(1) -- uncomment to clear highscore for testing
     
     Fish.setup()
     Flotsam.setup()

@@ -42,7 +42,7 @@ end
 function AttractMode:touched(t)
     if t.state == BEGAN then
         self.fish:each(function(fish)
-            fish:swimAway(t)
+            fish:swimAwayFrom(t)
         end)
     end
 end

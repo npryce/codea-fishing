@@ -105,7 +105,8 @@ function Angler:catch(thing)
     self.hookJoint.frequency = 30
     self.hookJoint.dampingRatio = 100
     
-    sound(DATA, "ZgNADQA+a1dBPkZq5OdRPU10/D1d9TY+eQB9fwBGQi1fWgBL")
+    --sound(DATA, "ZgNADQA+a1dBPkZq5OdRPU10/D1d9TY+eQB9fwBGQi1fWgBL")
+    sound(DATA, "ZgBAGABCN209P3xBGODOve1ExD7wpXW9bABLVQtHQD5APXFd")
 end
 
 function Angler:maybeRelease(thing)

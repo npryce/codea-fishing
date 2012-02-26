@@ -12,7 +12,7 @@ function PlayMode:start()
     self.fishCount = 3
     
     self.edge = physics.body(EDGE, 
-            vec2(0,self.waterHeight), vec2(WIDTH, self.waterHeight))
+            vec2(-WIDTH,self.waterHeight), vec2(2*WIDTH, self.waterHeight))
     self.edge.type = STATIC
     self.edge.categories = {CATEGORY_EDGE}
     
@@ -25,7 +25,7 @@ function PlayMode:start()
     end
     
     for i = 1, 10 do
-        self.stuff:add(Flotsam(self))
+        self.stuff:add(Flotsam(self, math.random(WIDTH/2+20, WIDTH-20)))
     end
     
     self.controller = All {
@@ -90,6 +90,10 @@ function PlayMode:animate(dt)
     self.effects:animate(dt)
 end
 
+function PlayMode:totalScoreMultiplier()
+    return self.scoreMultiplier * self.fishCount
+end
+
 function PlayMode:draw()
     background(131, 172, 224, 255)
     
@@ -105,51 +109,6 @@ function PlayMode:draw()
     self:drawScore()
 end
 
-function PlayMode:totalScoreMultiplier()
-    return self.scoreMultiplier * self.fishCount
-end
-
-function PlayMode:drawScore()
-    textMode(CORNER)
-    font("DB LCD Temp")
-    local alpha = 202
-    
-    if self.score > self.highscore then
-        fill(self.highscoreColor)
-    else
-        fill(255, 255, 255, self.scoreAlpha)
-    end
-    
-    local scoreText = self.score
-    
-    fontSize(64)
-    local sw, sh = textSize(scoreText)
-    text(scoreText, WIDTH-(sw+16), HEIGHT-(sh+16))
-        
-    fontSize(24)
-    local multiplierText = "x"..self:totalScoreMultiplier()
-    local mw, mh = textSize(multiplierText)
-    text(multiplierText, WIDTH-(mw+16), HEIGHT-(sh+16+mh))
-end
-
-function PlayMode:drawDebug()
-    self.player:drawDebug()
-    self.stuff:drawDebug()
-    self.controller:draw()
-    self:drawEdge(self.edge)
-end
-
-function PlayMode:drawEdge(body)
-    stroke(0, 255, 0, 255)
-    strokeWidth(5.0)
-    local points = body.points
-    for j = 1,#points-1 do
-        a = points[j]
-        b = points[j+1]
-        line(a.x, a.y, b.x, b.y)
-    end
-end
-
 function PlayMode:flotsamLanded(flotsam)
     self.player:maybeRelease(flotsam)
     
@@ -159,8 +118,6 @@ function PlayMode:flotsamLanded(flotsam)
     self.score = self.score + self:totalScoreMultiplier()
     self.scoreMultiplier = self.scoreMultiplier + 1
     
-    local hasHighscore = self.score > self.highscore
-    
     fontSize(64)
     local sw, sh = textSize(self.score)
     local sx = WIDTH - 16 - sw
@@ -168,35 +125,37 @@ function PlayMode:flotsamLanded(flotsam)
     local mid = vec2(sx+sw/2, sy+sh/2)
     
     self.effects:add(
-        SpinningSprite(flotsam.image, flotsam.body.position, mid))   
+        SpinningSprite(flotsam.image, flotsam.body.position, mid))
+    sound(DATA, "ZgBAMgBAPhw/P3xBGODOve1ExD7wpXW9SwBQVBFCPT5CPHFd")
     
-    if hasHighscore and not hadHighscore then
-        local function createHighscoreSpark(x, y)
-            local p = vec2(x,y)
-            self.effects:add(Particle {
-                pos = p,
-                vel = (p-mid):normalize() * math.random(10,40),
-                acc = vec2(0, -10),
-                lifespan = 1,
-                initialColor = alpha(self.highscoreColor, 255),
-                finalColor = alpha(self.highscoreColor, 0)
-            })
-        end
+    if self.score > self.highscore then
+        saveHighscore(self.score)
         
-        for px = 0, sw, 8 do
-            createHighscoreSpark(sx+px,sy)
-            createHighscoreSpark(sx+px,sy+sh)
+        if not hadHighscore then
+            local function createHighscoreSpark(x, y)
+                local p = vec2(x,y)
+                self.effects:add(Particle {
+                    pos = p,
+                    vel = (p-mid):normalize() * math.random(10,40),
+                    acc = vec2(0, 0),
+                    lifespan = 1,
+                    initialColor = alpha(self.highscoreColor, 255),
+                    finalColor = alpha(self.highscoreColor, 0)
+                })
+            end
+            
+            for px = 0, sw, 8 do
+                createHighscoreSpark(sx+px,sy)
+                createHighscoreSpark(sx+px,sy+sh)
+            end
+            for py = 0, sh, 8 do
+                createHighscoreSpark(sx,sy+py)
+                createHighscoreSpark(sx+sw,sy+py)
+            end
+            
+            sound(DATA, "ZgFAPwA/PxM4ailttTSCvUPHjT7EgQS/SABYR0BAPj5ATR5m")
         end
-        for py = 0, sh, 8 do
-            createHighscoreSpark(sx,sy+py)
-            createHighscoreSpark(sx+sw,sy+py)
-        end
-        
-        sound(DATA, "ZgFAPwA/PxM4ailttTSCvUPHjT7EgQS/SABYR0BAPj5ATR5m")
-    else
-        sound(DATA, "ZgBAMgBAPhw/P3xBGODOve1ExD7wpXW9SwBQVBFCPT5CPHFd")
     end
-    
     
     flotsam:launch()
 end
@@ -230,4 +189,49 @@ end
 function PlayMode:destroy()
     self.player:destroy()
     self.stuff:destroy()
+end
+
+function PlayMode:drawScore()
+    textMode(CORNER)
+    font("DB LCD Temp")
+    local alpha = 202
+    
+    if self.score > self.highscore then
+        fill(self.highscoreColor)
+    else
+        fill(255, 255, 255, self.scoreAlpha)
+    end
+    
+    local scoreText = self.score
+    
+    fontSize(64)
+    local sw, sh = textSize(scoreText)
+    text(scoreText, WIDTH-(sw+16), HEIGHT-(sh+16))
+        
+    fontSize(24)
+    local multiplierText = "x"..self:totalScoreMultiplier()
+    local mw, mh = textSize(multiplierText)
+    text(multiplierText, WIDTH-(mw+16), HEIGHT-(sh+16+mh))
+    
+    local highscoreText = "🏆" .. math.max(self.score, self.highscore)
+    hw, hh = textSize(highscoreText)
+    text(highscoreText, 16, HEIGHT-(hh+16))
+end
+
+function PlayMode:drawDebug()
+    self.player:drawDebug()
+    self.stuff:drawDebug()
+    self.controller:draw()
+    self:drawEdge(self.edge)
+end
+
+function PlayMode:drawEdge(body)
+    stroke(0, 255, 0, 255)
+    strokeWidth(5.0)
+    local points = body.points
+    for j = 1,#points-1 do
+        a = points[j]
+        b = points[j+1]
+        line(a.x, a.y, b.x, b.y)
+    end
 end

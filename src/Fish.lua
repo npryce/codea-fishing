@@ -120,6 +120,7 @@ function Fish:animateWhenEscaping()
 end
 
 function Fish:animateWhenHooked()
+    -- just hang in there!
 end
 
 function Fish:isOffscreen()
@@ -141,11 +142,12 @@ function Fish:hooked(hooker)
 end
 
 function Fish:unhooked()
-    self:swimAway(vec2(WIDTH/2, self.game.waterHeight/2))
+    self:swimAwayFrom(vec2(WIDTH/2, self.game.waterHeight/2))
     self.body.gravityScale = 0
+    sound(DATA, "ZgNANwBFRH8ETkBmHT8PPgAAgD8AAIA/MQB7WjgALz5/P1s3")
 end
 
-function Fish:swimAway(dangerPoint)
+function Fish:swimAwayFrom(dangerPoint)
     self.state = self.escapingState
     self:startSwimmingTo(
         self:randomOffscreenPositionAwayFrom(dangerPoint))

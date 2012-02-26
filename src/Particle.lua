@@ -5,7 +5,11 @@ function Particle:init(args)
     self.vel = args.vel or vec2(0,0)
     local acc = args.acc or vec2(0, 0)
     self.accMagnitude = acc:len()
-    self.accDirection = acc/self.accMagnitude
+    if self.accMagnitude == 0 then
+        self.accDirection = vec2(0,0)
+    else
+        self.accDirection = acc/self.accMagnitude
+    end
     self.drag = args.drag or 0
     self.lifespan = args.lifespan or 1
     self.isAlive = args.isAlive
@@ -29,7 +33,7 @@ function Particle:draw()
     ellipseMode(CENTER)
     smooth()
     
-    ellipse(self.pos.x, self.pos.y, 5, 5)
+    ellipse(self.pos.x, self.pos.y, 6, 6)
 end
 
 function Particle:animate(dt)

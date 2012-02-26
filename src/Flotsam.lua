@@ -13,7 +13,7 @@ function Flotsam.setup()
     Flotsam.images = Flotsam.junk
 end
 
-function Flotsam:init(game)
+function Flotsam:init(game, x)
     self.game = game
     self.body = physics.body(CIRCLE, 20)
     self.body.info = self
@@ -22,14 +22,14 @@ function Flotsam:init(game)
     self.body.categories = {CATEGORY_FLOATING}
     self.body.mask = self.floatingMask
     
-    self:launch()
+    self:launch(x)
 end
 
-function Flotsam:launch()
+function Flotsam:launch(x)
     self.image = randomElement(self.images)
     self.radius = math.max(self.image.width, self.image.height)
     self.radius = 16
-    local pos = vec2(WIDTH+self.radius, 
+    local pos = vec2(x or WIDTH+self.radius, 
                      math.random(self.radius, self.game.waterHeight-self.radius))
     local vel = vec2(-math.random(10, 50), 0)
     
