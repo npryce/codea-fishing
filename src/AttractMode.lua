@@ -9,9 +9,14 @@ AttractMode.help = {
     "Don't catch the fish with your line.",
     "If you catch a fish, dislodge it from your line and it will swim away.",  
     "When all the fish have swum away, the game is over.",
-    "Don't let any junk float downstream to earn a higher score multiplier."
+    "Don't let any junk float downstream to earn a higher score multiplier.",
+    "The more you catch, the more the fish will be curious about your line",
+    "Lonely fish are more curious"
 }
-AttractMode.caughtCount = 0 -- currently used by fish drawDebug, should find better way
+
+-- currently used by Fish:drawDebug, should find better way
+AttractMode.caughtCount = 0
+AttractMode.fishCount = 0 
 
 function AttractMode:start()
     self.fish = PhysicalGroup()
@@ -19,7 +24,7 @@ function AttractMode:start()
         self.fish:add(Fish(self))
     end
     
-    self.help = Banner {
+    self.helpBanner = Banner {
         font = "PartyLetPlain",
         fontSize = 40,
         fill = self.titleColor,
@@ -27,12 +32,15 @@ function AttractMode:start()
         pos = vec2(WIDTH/2, HEIGHT/4)
     }
     
+    self.musicPlayer = ABCMusic(randomElement(Tunes), true)
+    
     self.highscore = readHighscore()
 end
 
 function AttractMode:animate(dt)
-    self.help:animate(dt)
+    self.helpBanner:animate(dt)
     self.fish:animate(dt)
+    self.musicPlayer:play()
     
     if self.fish:isEmpty() then
         switchMode(PlayMode())
@@ -59,10 +67,10 @@ function AttractMode:draw()
     sillyText("Help the Fish", WIDTH/2, 11*HEIGHT/16)
     
     pushStyle()
-    self.help:draw()
+    self.helpBanner:draw()
     popStyle()
     fontSize(40)
-    text("Tap to Start", self.help.pos.x, self.help.pos.y-48)
+    text("Tap to Start", self.helpBanner.pos.x, self.helpBanner.pos.y-48)
     text("Highscore: " .. self.highscore, WIDTH/2, 7*HEIGHT/16)
 end
 

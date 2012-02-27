@@ -60,6 +60,19 @@ function avg(x, y)
     return (x+y)/2
 end
 
+function keys(t)
+    local keys = {}
+    for key, _ in pairs(t) do
+        table.insert(keys, key)
+    end
+    return keys
+end
+
+function randomMapping(t)
+    local key = randomElement(keys(t))
+    return key, t[key]
+end
+
 function randomElement(t)
     return t[math.random(#t)]
 end

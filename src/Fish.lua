@@ -33,7 +33,7 @@ function Fish:isAlive()
 end
 
 function Fish:hookSensorRadius()
-    return self.radius * self.game.caughtCount
+    return self.radius * self.game.caughtCount * math.max(1, 4-self.game.fishCount)
 end
 
 function Fish:destroy()

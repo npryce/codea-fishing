@@ -9,6 +9,7 @@
 		<string>Main</string>
 		<string>World</string>
 		<string>AttractMode</string>
+		<string>Tunes</string>
 		<string>Banner</string>
 		<string>PlayMode</string>
 		<string>GameOverMode</string>
@@ -23,6 +24,7 @@
 		<string>ControllerSplitScreen</string>
 		<string>ControllerAll</string>
 		<string>ControllerVirtualSlider</string>
+		<string>ABCMusic</string>
 		<string>Functions</string>
 	</array>
 	<key>Created</key>
